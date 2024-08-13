@@ -71,7 +71,7 @@ trabajador(bodoque,periodista(2,licenciatura)). %Sueldo 12k
 trabajador(bodoque,reportero(5,300)). %Sueldo 80k
 trabajador(marioHugo,periodista(10,posgrado)). %Sueldo 67,5k
 trabajador(juanin,conductor(0)). %Sueldo 0
-trabajador(messi,futbolista(20,cuarentaycinco)).
+trabajador(messi,futbolista(20,45)).
 
 %Punto 5:
 
@@ -111,12 +111,10 @@ sueldo(periodista(AniosExperiencia,Titulo),Sueldo):-
 
 aumentoSegunTitulo(licenciatura,20).
 aumentoSegunTitulo(posgrado,35).
-aumentoSegunTitulo(cuarentaycinco,4500).
-
-
-%Punto 6:
+aumentoSegunTitulo(cuarentaycinco,450).
+%Punto 6: 
+trabajador(messi,futbolista(20,cuarentaycinco)).
 
 sueldo(futbolista(AniosExperiencia,Titulo),Sueldo):-
     aumentoSegunTitulo(Titulo,Aumento),
-    Sueldo is AniosExperiencia * 100000 + (1/Aumento+100).
-    
+    Sueldo is AniosExperiencia * 16000 * (1+Aumento/100).
