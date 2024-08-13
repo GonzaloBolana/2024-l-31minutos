@@ -40,6 +40,83 @@ Una canción tiene muchas reproducciones si tiene más de 7000000 reproducciones
 
 noEsReconocidaPorLosCriticos(Cancion):-
     cancion(Cancion, _,  Reproducciones),
-    Reproducciones > 7000000.
+    Reproducciones > 7000000,
     not(rankingTop3(_,_,Cancion)).
 
+
+% Punto 3: Saber si dos compositores son colaboradores, lo cual ocurre si compusieron alguna canción juntos
+
+sonColaboradores(Compositor,OtroCompositor):-
+    componeEn(Compositor,Cancion),
+    componeEn(OtroCompositor,OtraCancion),
+    Cancion = OtraCancion. % Si componen juntos significa que compusieron la misma cancion.
+
+componeEn(Compositor,Cancion):-
+    cancion(Cancion,Compositores,_),
+    member(Compositor,Compositores). %Compositor es miembro de compositores.
+
+
+%Punto 4:
+/*
+Modelar en la solución a los siguientes trabajadores:
+- Tulio, conductor con 5 años de experiencia.
+- Bodoque, periodista con 2 años de experiencia con un título de licenciatura, y también reportero con 5 años de experiencia y 300 notas realizadas.
+- Mario Hugo, periodista con 10 años de experiencia con un posgrado.
+- Juanin, que es un conductor que recién empieza así que no tiene años de experiencia.
+
+*/
+
+trabajador(tulio,conductor(5)). %Sueldo 50k
+trabajador(bodoque,periodista(2,licenciatura)). %Sueldo 12k
+trabajador(bodoque,reportero(5,300)). %Sueldo 80k
+trabajador(marioHugo,periodista(10,posgrado)). %Sueldo 67,5k
+trabajador(juanin,conductor(0)). %Sueldo 0
+trabajador(messi,futbolista(20,cuarentaycinco)).
+
+%Punto 5:
+
+/*
+Conocer el sueldo total de una persona, el cual está dado por la suma de los sueldos de cada uno de sus trabajos. 
+*El sueldo de cada trabajo se calcula de la siguiente forma:
+- El sueldo de un conductor es de 10000 por cada año de experiencia
+- El sueldo de un reportero también es 10000 por cada año de experiencia más  100 por cada nota que haya hecho en su carrera.
+- Los periodistas, por cada año de experiencia reciben 5000, pero se les aplica un porcentaje de incremento del 20% cuando tienen una licenciatura o
+  del 35% si tienen un posgrado.
+
+  Tulio gana total 50k
+  Bodoque gana total 92k
+  Mario Hugo gana total 67,5k
+  Juanin gana total 0k
+*/
+
+sueldoTotal(Persona,SueldoTotal):-
+    trabajador(Persona,_),
+    findall(Sueldo, sueldoSegunTrabajo(Persona,Sueldo), Sueldos),
+    sum_list(Sueldos, SueldoTotal).
+
+sueldoSegunTrabajo(Persona,Sueldo):-
+    trabajador(Persona,TipoTrabajo),
+    sueldo(TipoTrabajo,Sueldo).
+
+
+sueldo(conductor(AniosExperiencia),Sueldo):-
+    Sueldo is AniosExperiencia * 10000.
+
+sueldo(reportero(AniosExperiencia,NotasRealizadas),Sueldo):-
+    Sueldo is AniosExperiencia * 10000 + 100 * NotasRealizadas.
+
+sueldo(periodista(AniosExperiencia,Titulo),Sueldo):-
+    aumentoSegunTitulo(Titulo,Aumento),
+    Sueldo is AniosExperiencia * 5000 * (1+Aumento/100).
+
+aumentoSegunTitulo(licenciatura,20).
+aumentoSegunTitulo(posgrado,35).
+aumentoSegunTitulo(cuarentaycinco,4500).
+
+
+%Punto 6:
+
+sueldo(futbolista(AniosExperiencia,Titulo),Sueldo):-
+    aumentoSegunTitulo(Titulo,Aumento),
+    Sueldo is AniosExperiencia * 100000 + (1/Aumento+100).
+    
